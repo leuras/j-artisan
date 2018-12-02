@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.Map;
 
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import br.com.leuras.jartisan.constant.TemplateVariables;
-import br.com.leuras.jartisan.enumerator.TemplateEnum;
+import br.com.leuras.jartisan.enumerator.TemplateTypeEnum;
 
 @Service
 public class TemplateService {
@@ -30,7 +31,7 @@ public class TemplateService {
 	@Value("${file.extension}")
 	private String filenameExtension;
 	
-	public String generate(final TemplateEnum template, final JtwigModel variables) throws FileNotFoundException, FileAlreadyExistsException {
+	public String generate(final TemplateTypeEnum template, final Map<String, Object> variables) throws FileNotFoundException, FileAlreadyExistsException {
 		
 		String templatePath = String.format("%s/%s", this.templatesDirectory.trim(), template.getFilename());
 		
@@ -41,14 +42,14 @@ public class TemplateService {
 		}
 		
 		JtwigTemplate jtwigEngine = JtwigTemplate.classpathTemplate(templatePath);
-		jtwigEngine.render(variables, new FileOutputStream(outputFile));
+		jtwigEngine.render(JtwigModel.newModel(variables), new FileOutputStream(outputFile));
 		
 		return outputFile.getName();
 	}
 	
-	protected File getOutputFile(final TemplateEnum template, final JtwigModel variables) {
+	protected File getOutputFile(final TemplateTypeEnum template, final Map<String, Object> variables) {
 		
-		StringBuilder outputPath = new StringBuilder(this.baseOutputDirectory.trim());
+		final StringBuilder outputPath = new StringBuilder(this.baseOutputDirectory.trim());
 		
 		outputPath.append(File.separator);
 		
@@ -57,8 +58,8 @@ public class TemplateService {
 		outputPath.append(File.separator);
 		
 		//-- converts package into system path
-		String pkg = (String) variables.get(TemplateVariables.PACKAGE).get().getValue();
-		String fullPackage = pkg.concat(template.getSubPackageFragment());
+		String pkg = (String) variables.get(TemplateVariables.PACKAGE);
+		String fullPackage = pkg.concat(".").concat(template.getSubPackageFragment());
 				
 		outputPath.append(this.convertPackageIntoSystemPath(fullPackage));
 		outputPath.append(File.separator);
@@ -68,7 +69,7 @@ public class TemplateService {
 		
 		StringBuilder outputFilename = new StringBuilder(outputPath.toString());
 		
-		String classname = (String) variables.get(TemplateVariables.CLASSNAME).get().getValue();
+		String classname = (String) variables.get(TemplateVariables.CLASSNAME);
 		
 		outputFilename.append(classname);
 		outputFilename.append(this.filenameExtension);
@@ -76,7 +77,7 @@ public class TemplateService {
 		return new File(outputFilename.toString());
 	}
 	
-	public String convertPackageIntoSystemPath(final String pkg) {
+	protected String convertPackageIntoSystemPath(final String pkg) {
 		return pkg.replaceAll("\\.", File.separator);
 	}
 }

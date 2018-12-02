@@ -1,17 +1,17 @@
 package br.com.leuras.jartisan.enumerator;
 
-public enum TemplateEnum {
+public enum TemplateTypeEnum {
 
-	CONTROLLER("controller.twig", ".controller"), 
-	SERVICE("service.twig", ".service"),
-	DAO("dao.twig", ".dao"), 
-	DAO_IMPL("daoImpl.twig", ".dao.impl"); 
+	CONTROLLER("controller.twig", "controller"), 
+	SERVICE("service.twig", "service"),
+	DAOIMPL("daoImpl.twig", "dao.impl"), 
+	DAO("dao.twig", "dao");
 
 	private String filename;
 	
 	private String subPackageFragment;
 
-	private TemplateEnum(final String filename, final String subPackageFragment) {
+	private TemplateTypeEnum(final String filename, final String subPackageFragment) {
 		this.filename = filename;
 		this.subPackageFragment = subPackageFragment;
 	}
