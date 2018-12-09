@@ -1,5 +1,6 @@
 package br.com.leuras.jartisan.command.core;
 
+import br.com.leuras.jartisan.builder.JArtisanMakeCommandBuilderImpl;
 import br.com.leuras.jartisan.enumerator.TemplateTypeEnum;
 
 public interface JArtisanMakeCommandBuilder extends JArtisanCommandBuilder {
@@ -10,5 +11,9 @@ public interface JArtisanMakeCommandBuilder extends JArtisanCommandBuilder {
 	
 	JArtisanMakeCommandBuilder withTargetEntity(String targetEntity);
 	
-	JArtisanMakeCommandBuilder withTemplateType(TemplateTypeEnum type);	
+	JArtisanMakeCommandBuilderImpl withDAO(String dao);	
+
+	JArtisanMakeCommandBuilder withTemplateType(TemplateTypeEnum type);
+	
+	JArtisanMakeCommandBuilder withVar(String name, Object value);
 }

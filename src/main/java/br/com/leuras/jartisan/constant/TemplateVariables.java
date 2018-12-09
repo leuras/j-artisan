@@ -12,6 +12,10 @@ public final class TemplateVariables {
 	
 	public static final String ENTITY = "entity";
 
+    public static final String DAO = "dao";
+    
+    public static final String SERVICE = "service";
+
 	private TemplateVariables() {
 
 	}

@@ -25,9 +25,22 @@ public class MakeCommand {
 
     @ShellMethod("Creates a new service class")
     public void makeService(@ShellOption(help = ShellOptionHelp.NAME) String name,
-            @ShellOption(help = ShellOptionHelp.ENTITY, defaultValue = ShellOption.NULL) String entity,
-            @ShellOption(help = ShellOptionHelp.PACKAGE, defaultValue = ShellOption.NULL) String pkg) {
-
+            @ShellOption(help = ShellOptionHelp.ENTITY) String entity,
+            @ShellOption(help = ShellOptionHelp.PACKAGE, defaultValue = ShellOption.NULL) String pkg,
+            @ShellOption(help = ShellOptionHelp.DAO, defaultValue = ShellOption.NULL) String dao) {
+        
+        if (dao != null) {
+            this.makeDao(dao, entity, pkg);
+            this.builder.withDAO(dao);
+        }
+        
+        this.builder
+            .withClassName(name)
+            .withClassPackage(pkg)
+            .withTargetEntity(entity)
+            .withTemplateType(TemplateTypeEnum.SERVICE)
+            .build()
+            .run();
     }
 
     @ShellMethod("Creates a new DAO interface and your implementation class")
@@ -35,23 +48,19 @@ public class MakeCommand {
             @ShellOption(help = ShellOptionHelp.ENTITY) String entity,
             @ShellOption(help = ShellOptionHelp.PACKAGE, defaultValue = ShellOption.NULL) String pkg) {
 
-        JArtisanMakeCommandImpl command = (JArtisanMakeCommandImpl) this.builder
+        this.builder
             .withClassName(name)
             .withClassPackage(pkg)
             .withTargetEntity(entity)
             .withTemplateType(TemplateTypeEnum.DAO)
-            .build();
+            .build()
+            .run();
         
-        command.run();
-        
-        final String classImpl = String.format("%sImpl", name);
-        
-        command = (JArtisanMakeCommandImpl) this.builder
-            .withClassName(classImpl)
+        this.builder
+            .withClassName(String.format("%sImpl", name))
             .withTemplateType(TemplateTypeEnum.DAOIMPL)
-            .build();
-        
-        command.addVariable(TemplateVariables.INTERFACE, name);
-        command.run();
+            .withVar(TemplateVariables.INTERFACE, name)
+            .build()
+            .run();        
     }
 }
