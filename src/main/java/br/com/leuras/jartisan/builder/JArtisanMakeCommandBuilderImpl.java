@@ -76,9 +76,15 @@ public final class JArtisanMakeCommandBuilderImpl implements JArtisanMakeCommand
 	}
 	
 	@Override
-    public JArtisanMakeCommandBuilderImpl withDAO(final String dao) {
+    public JArtisanMakeCommandBuilderImpl withDAOClassName(final String dao) {
 	    this.variables.put(TemplateVariables.DAO, dao);
         return this;
+    }
+	
+	@Override
+	public JArtisanMakeCommandBuilderImpl withServiceClassName(final String service) {
+	    this.variables.put(TemplateVariables.SERVICE, service);
+	    return this;
     }
 
 

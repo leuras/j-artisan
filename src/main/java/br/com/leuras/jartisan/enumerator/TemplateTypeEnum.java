@@ -3,6 +3,7 @@ package br.com.leuras.jartisan.enumerator;
 public enum TemplateTypeEnum {
 
 	CONTROLLER("controller.twig", "controller"), 
+	ENDPOINT("endpoint.twig", "endpoint"), 
 	SERVICE("service.twig", "service"),
 	DAOIMPL("daoImpl.twig", "dao.impl"), 
 	DAO("dao.twig", "dao");

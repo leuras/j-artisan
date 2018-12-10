@@ -1,0 +1,116 @@
+{%- set hasService = defined(service) and (not empty(service)) -%}
+package {{ package }}.endpoint;
+
+import java.util.List;
+
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+
+import javax.inject.Inject;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import {{ root }}.architecture.annotation.Secured;
+import {{ package }}.entity.{{ entity }};
+{% if (hasService) -%}
+import {{ package }}.service.{{ service }};
+{%- endif %}
+
+@Secured
+@DenyAll
+@Path("/{% filter lower %}{{ entity }}{% endfilter %}")
+public class {{ name }} {
+	
+	{% if (hasService) -%}
+	@Inject
+	private {{ service }} service;
+	{%- endif %}
+	
+	@GET
+	@PermitAll
+	@Produces(value={MediaType.APPLICATION_JSON})
+	public Response list() {
+	
+		{% if (hasService) -%}
+		try {
+
+			List<{{ entity }}> results = this.service.findAll();
+			
+			if (!ObjectUtils.allNotNull(results) || results.isEmpty()) {
+				return Response.noContent().build();
+			}
+			
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+			
+			return Response.ok(mapper.writerWithView(Views.EmployeeWithDepartment.class)
+					.writeValueAsString(results)).build();
+		} catch (Exception e) {
+			// TODO: Look for "Exception Mappers"
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+		{%- else -%}
+		return null;
+		{%- endif %}
+	}
+	
+	@GET
+	@PermitAll
+	@Path("/{id}")
+	@Produces(value={MediaType.APPLICATION_JSON})
+	public Response findById(@PathParam(value = "id") Integer id) {
+	
+		{% if (hasService) -%}
+		try {
+
+			{{ entity }} entity = this.service.findById(id);
+			
+			if (!ObjectUtils.allNotNull(entity)) {
+				return Response.status(Status.NOT_FOUND).build();
+			}
+			
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+			
+			return Response.ok(mapper.writerWithView(Views.Employee.class)
+					.writeValueAsString(entity)).build();
+			
+		} catch (Exception e) {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+		{%- else -%}
+		return null;
+		{%- endif %}
+	}
+	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{id}")
+	public Response delete(@PathParam("id") Integer id) {
+	
+		{% if (hasService) -%}
+		try {
+			this.service.delete(id);
+			return Response.ok().build();
+		} catch (Exception e) {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+		{%- else -%}
+		return null;
+		{%- endif %}
+	}
+}

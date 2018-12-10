@@ -1,0 +1,45 @@
+{%- set hasDao = defined(dao) and (not empty(dao)) -%}
+package {{ package }}.service;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+{% if (hasDao) -%}
+import {{ package }}.dao.{{ dao }};
+{%- endif %}
+import {{ package }}.entity.{{ entity }};
+
+@Stateless
+public class {{ classname }} {
+		
+	{% if (hasDao) -%}
+	@Inject
+	private {{ dao }} dao;
+	{%- endif %} 
+	
+	public List<{{ entity }}> findAll() {
+		{%- if (hasDao) %}
+		return this.dao.findAll();
+		{%- else -%}
+		return null;
+		{%- endif %}
+	}
+	
+	public {{ entity }} findById(final Integer id) {
+		{%- if (hasDao) %}
+		return this.dao.findById(id);
+		{%- else -%}
+		return null;
+		{%- endif %}
+	}
+	
+	public void delete(final Integer id) {
+		{%- if (hasDao) %}
+		this.dao.delete(this.findById(id));
+		{%- else -%}
+		return null;
+		{%- endif %}
+	}
+}

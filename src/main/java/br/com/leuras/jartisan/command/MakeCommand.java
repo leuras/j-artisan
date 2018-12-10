@@ -18,20 +18,34 @@ public class MakeCommand {
 
     @ShellMethod("Creates a new controller class")
     public void makeController(@ShellOption(help = ShellOptionHelp.NAME) String name,
-            @ShellOption(help = ShellOptionHelp.ENTITY, defaultValue = ShellOption.NULL) String entity,
-            @ShellOption(help = ShellOptionHelp.PACKAGE, defaultValue = ShellOption.NULL) String pkg) {
-
+            @ShellOption(help = ShellOptionHelp.ENTITY) String entity,
+            @ShellOption(help = ShellOptionHelp.PACKAGE, defaultValue = ShellOption.NULL) String pkg,
+            @ShellOption(help = ShellOptionHelp.SERVICE, defaultValue = ShellOption.NULL) String service,
+            @ShellOption(help = ShellOptionHelp.DAO,     defaultValue = ShellOption.NULL) String dao) {
+        
+        if (service != null) {
+            this.makeService(service, entity, pkg, dao);
+            this.builder.withServiceClassName(service);
+        }
+        
+        this.builder
+            .withClassName(name)
+            .withClassPackage(pkg)
+            .withTargetEntity(entity)
+            .withTemplateType(TemplateTypeEnum.CONTROLLER)
+            .build()
+            .run();
     }
 
     @ShellMethod("Creates a new service class")
     public void makeService(@ShellOption(help = ShellOptionHelp.NAME) String name,
             @ShellOption(help = ShellOptionHelp.ENTITY) String entity,
             @ShellOption(help = ShellOptionHelp.PACKAGE, defaultValue = ShellOption.NULL) String pkg,
-            @ShellOption(help = ShellOptionHelp.DAO, defaultValue = ShellOption.NULL) String dao) {
+            @ShellOption(help = ShellOptionHelp.DAO,     defaultValue = ShellOption.NULL) String dao) {
         
         if (dao != null) {
             this.makeDao(dao, entity, pkg);
-            this.builder.withDAO(dao);
+            this.builder.withDAOClassName(dao);
         }
         
         this.builder
