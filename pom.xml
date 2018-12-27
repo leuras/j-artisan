@@ -6,7 +6,7 @@
 
 	<groupId>br.com.leuras</groupId>
 	<artifactId>j-artisan</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0-beta</version>
 	<packaging>jar</packaging>
 
 	<name>j-artisan</name>
