@@ -66,6 +66,28 @@
 					<executable>true</executable>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+			            <goals>
+			            	<goal>copy-resources</goal>
+			            </goals>
+			            <configuration>
+              				<outputDirectory>${basedir}/target</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<include>application.properties</include>
+									<filtering>true</filtering>
+								</resource>
+							</resources>              
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
